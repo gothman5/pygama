@@ -1,0 +1,57 @@
+{
+
+  "loc_dir":"$DATADIR/coherent",
+  "raw_dir":"$DATADIR/coherent/data",
+  "tier1_dir":"$DATADIR/coherent/tier1",
+  "tier2_dir":"$DATADIR/coherent/tier2",
+  "suffix":"",
+
+  "digitizer":"ORSIS3316Model",
+  "daq":"ORCA",
+
+  "t1_prefix":"t1_run",
+  "t2_prefix":"t2_run",
+
+  "chunksize":1000,
+  "clock":100e6,
+  "rollover":1,
+
+  "ds":{
+    "0":["0, 999999", "test run, ORCA/3316 decoder"],
+    "1":["1000000, 99999999", "example of further runs"]
+  },
+
+  "build_options":{
+    "conf1":{
+      "run_coverage":[0,999999],
+      "daq_to_raw_options":{
+        "daq":"ORCA",
+        "clk" : 100e6,
+        "digitizer":"ORSIS3316WaveformDecoder",
+        "buffer_wrap":1,
+        "window":"max",
+        "n_samp":2000,
+        "n_blsamp":10000
+      },
+      "raw_to_dsp_options":{
+        "clk" : 100e6,
+        "fit_bl" : {"ihi":600, "order":1},
+        "blsub" : {},
+        "pz" : {"decay":72},
+        "trap" : [
+            {"wfout":"wf_pztrap", "wfin":"wf_pz", "rise":1.5, "flat":2.5, "decay":72}
+        ],
+        "current" : [
+            {"wfin":"wf_blsub", "wfout":"wf_current", "sigma":5}
+        ],
+        "get_max" : [
+            {"wfin":"wf_current"},
+            {"wfin":"wf_pztrap"},
+            {"wfin":"wf_pz"}
+        ],
+        "timepoint" : {"wfin":"wf_pz", "pct":[5,50,90,100]},
+        "dcr" : {"wfin":"wf_pz"}
+      }
+    }
+  }
+}

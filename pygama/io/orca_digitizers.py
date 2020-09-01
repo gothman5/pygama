@@ -27,7 +27,7 @@ class ORCAStruck3302(OrcaDecoder):
               'dtype': 'uint32',
             },
             'timestamp': {
-              'dtype': 'uint64',
+              'dtype': 'uint32',
               'units': 'clock_ticks',
             },
             'crate': {
@@ -116,7 +116,7 @@ class ORCAStruck3302(OrcaDecoder):
         wf_length32 = p32[1]
         ene_wf_length32 = p32[2]
         evt_header_id = p32[3] & 0xFF
-        tb['timestamp'].nda[ii] = ((p32[3] >> 16) & 0xFFFF) << 32 + p32[4]
+        tb['timestamp'].nda[ii] = p32[4] + ((p32[3] >> 16) & 0xFFFF)
         last_word = p32[-1]
 
         # get the footer
@@ -166,8 +166,8 @@ class ORCAStruck3302(OrcaDecoder):
                           (ievt, expected_wf_length, i_wf_stope - i_wf_start))
                 tbwf[:expected_wf_length] = p16[i_wf_start:i_wf_stop]
             else:
-                len1 = istop_1-i_start_1
-                len2 = istop_2-i_start_2
+                len1 = i_stop_1-i_start_1
+                len2 = i_stop_2-i_start_2
                 if len1+len2 != expected_wf_length:
                     print("ERROR: event %d, we expected %d WF samples and only got %d" %
                           (ievt, expected_wf_length, len1+len2))
